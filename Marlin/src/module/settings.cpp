@@ -580,11 +580,11 @@ typedef struct SettingsDataStruct {
   //
   // Input Shaping
   //
-  #if HAS_SHAPING_X
+  #if ENABLED(INPUT_SHAPING_X)
     float shaping_x_frequency, // M593 X F
           shaping_x_zeta;      // M593 X D
   #endif
-  #if HAS_SHAPING_Y
+  #if ENABLED(INPUT_SHAPING_Y)
     float shaping_y_frequency, // M593 Y F
           shaping_y_zeta;      // M593 Y D
   #endif
@@ -1095,7 +1095,7 @@ void MarlinSettings::postprocess() {
     {
       _FIELD_TEST(bedPID);
       #if ENABLED(PIDTEMPBED)
-        const PID_t &pid = thermalManager.temp_bed.pid;
+        const auto &pid = thermalManager.temp_bed.pid;
         const raw_pid_t bed_pid = { pid.p(), pid.i(), pid.d() };
       #else
         const raw_pid_t bed_pid = { NAN, NAN, NAN };
@@ -1109,7 +1109,7 @@ void MarlinSettings::postprocess() {
     {
       _FIELD_TEST(chamberPID);
       #if ENABLED(PIDTEMPCHAMBER)
-        const PID_t &pid = thermalManager.temp_chamber.pid;
+        const auto &pid = thermalManager.temp_chamber.pid;
         const raw_pid_t chamber_pid = { pid.p(), pid.i(), pid.d() };
       #else
         const raw_pid_t chamber_pid = { NAN, NAN, NAN };
@@ -1617,12 +1617,12 @@ void MarlinSettings::postprocess() {
     //
     // Input Shaping
     ///
-    #if ENABLED(INPUT_SHAPING)
-      #if HAS_SHAPING_X
+    #if HAS_SHAPING
+      #if ENABLED(INPUT_SHAPING_X)
         EEPROM_WRITE(stepper.get_shaping_frequency(X_AXIS));
         EEPROM_WRITE(stepper.get_shaping_damping_ratio(X_AXIS));
       #endif
-      #if HAS_SHAPING_Y
+      #if ENABLED(INPUT_SHAPING_Y)
         EEPROM_WRITE(stepper.get_shaping_frequency(Y_AXIS));
         EEPROM_WRITE(stepper.get_shaping_damping_ratio(Y_AXIS));
       #endif
@@ -2602,7 +2602,7 @@ void MarlinSettings::postprocess() {
       //
       // Input Shaping
       //
-      #if HAS_SHAPING_X
+      #if ENABLED(INPUT_SHAPING_X)
       {
         float _data[2];
         EEPROM_READ(_data);
@@ -2611,7 +2611,7 @@ void MarlinSettings::postprocess() {
       }
       #endif
 
-      #if HAS_SHAPING_Y
+      #if ENABLED(INPUT_SHAPING_Y)
       {
         float _data[2];
         EEPROM_READ(_data);
@@ -3389,12 +3389,12 @@ void MarlinSettings::reset() {
   //
   // Input Shaping
   //
-  #if ENABLED(INPUT_SHAPING)
-    #if HAS_SHAPING_X
+  #if HAS_SHAPING
+    #if ENABLED(INPUT_SHAPING_X)
       stepper.set_shaping_frequency(X_AXIS, SHAPING_FREQ_X);
       stepper.set_shaping_damping_ratio(X_AXIS, SHAPING_ZETA_X);
     #endif
-    #if HAS_SHAPING_Y
+    #if ENABLED(INPUT_SHAPING_Y)
       stepper.set_shaping_frequency(Y_AXIS, SHAPING_FREQ_Y);
       stepper.set_shaping_damping_ratio(Y_AXIS, SHAPING_ZETA_Y);
     #endif
@@ -3650,7 +3650,7 @@ void MarlinSettings::reset() {
     //
     // Input Shaping
     //
-    TERN_(INPUT_SHAPING, gcode.M593_report(forReplay));
+    TERN_(HAS_SHAPING, gcode.M593_report(forReplay));
 
     //
     // Linear Advance
